@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - HIMA AKUNTANSI UT BANDUNG</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: { 800: '#0a192f', 900: '#020c1b' },
+                        gold: { 400: '#FFD700', 500: '#D4AF37', 600: '#AA8C2C' }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-navy-900 via-navy-800 to-slate-900 min-h-screen flex items-center justify-center p-4">
+    
+    <div class="w-full max-w-md">
+        <!-- Logo & Title -->
+        <div class="text-center mb-8">
+            <div class="bg-white w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center shadow-xl">
+                <i class="fas fa-user-shield text-4xl text-navy-900"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-white mb-2">Admin Panel</h1>
+            <p class="text-gold-400">HIMA AKUNTANSI UT BANDUNG</p>
+        </div>
+
+        <!-- Login Form -->
+        <div class="bg-white rounded-2xl shadow-2xl p-8">
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <!-- Username -->
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">
+                        <i class="fas fa-user mr-2 text-navy-800"></i>Username
+                    </label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        required
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-gold-500 focus:outline-none transition"
+                        placeholder="Masukkan username">
+                </div>
+
+                <!-- Password -->
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">
+                        <i class="fas fa-lock mr-2 text-navy-800"></i>Password
+                    </label>
+                    <div class="relative">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            required
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-gold-500 focus:outline-none transition pr-12"
+                            placeholder="Masukkan password">
+                        <button 
+                            type="button"
+                            onclick="togglePassword()"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-navy-800">
+                            <i class="fas fa-eye" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <div id="errorMessage" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm hidden">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    <span id="errorText"></span>
+                </div>
+
+                <!-- Remember Me -->
+                <div class="mb-6">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" id="rememberMe" class="w-4 h-4 text-gold-500">
+                        <span class="ml-2 text-sm text-gray-600">Ingat saya</span>
+                    </label>
+                </div>
+
+                <!-- Login Button -->
+                <button 
+                    type="submit" 
+                    id="loginBtn"
+                    class="w-full bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-white font-bold py-3 rounded-lg transition duration-300 shadow-lg">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Login
+                </button>
+            </form>
+
+            <!-- Info -->
+            <div class="mt-6 text-center text-sm text-gray-500">
+                <p>Default: <code class="bg-gray-100 px-2 py-1 rounded">admin / admin123</code></p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-6 text-gray-400 text-sm">
+            <p>© 2024 HIMA AKUNTANSI UT BANDUNG</p>
+        </div>
+    </div>
+
+    <script>
+        // Auto-detect API base URL
+        const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:3000'
+        : window.location.origin;   
+        
+        // Toggle password visibility
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Show error message
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            errorText.textContent = message;
+            errorDiv.classList.remove('hidden');
+            
+            setTimeout(() => {
+                errorDiv.classList.add('hidden');
+            }, 5000);
+        }
+
+        // Handle login
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            
+            // Disable button
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Loading...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.status === 'success') {
+                    // Save token
+                    localStorage.setItem('adminToken', data.token);
+                    localStorage.setItem('adminUser', JSON.stringify(data.user));
+                    
+                    // Redirect to dashboard
+                    window.location.href = '/admin/dashboard.html';
+                } else {
+                    showError(data.error || 'Login gagal. Periksa username dan password Anda.');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('Terjadi kesalahan. Pastikan server backend berjalan.');
+            } finally {
+                // Re-enable button
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i>Login';
+            }
+        }
+
+        // Check if already logged in
+        window.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('adminToken');
+            if (token) {
+                // Verify token is still valid
+                fetch(`${API_BASE}/api/admin/pesan`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/admin/dashboard.html';
+                    }
+                })
+                .catch(() => {
+                    // Token invalid, clear it
+                    localStorage.removeItem('adminToken');
+                    localStorage.removeItem('adminUser');
+                });
+            }
+        });
+    </script>
+    <!-- Deployed via GitHub Actions -->
+</body>
+</html>

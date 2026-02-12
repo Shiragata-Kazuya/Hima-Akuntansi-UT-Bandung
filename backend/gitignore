@@ -1,0 +1,57 @@
+# Node modules
+node_modules/
+
+# Database files (akan regenerate otomatis)
+database/*.json
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Key Firebase
+firebase-key.json
+# Dependencies
+node_modules/
+functions/node_modules/
+
+# Environment variables
+.env
+.env.local
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# Database (old system)
+database/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

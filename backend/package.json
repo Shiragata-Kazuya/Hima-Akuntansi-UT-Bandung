@@ -1,0 +1,31 @@
+{
+  "name": "hima-akuntansi-backend",
+  "version": "2.0.0",
+  "description": "Backend API for HIMA AKUNTANSI UT BANDUNG with Admin Panel",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "hima",
+    "akuntansi",
+    "backend",
+    "api"
+  ],
+  "author": "HIMA AKUNTANSI UT BANDUNG",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.4",
+    "express": "^5.2.1",
+    "firebase-admin": "^12.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
