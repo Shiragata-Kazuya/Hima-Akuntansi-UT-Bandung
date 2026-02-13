@@ -1,7 +1,7 @@
 {
   "name": "backend-iot-bagas",
   "compatibility_date": "2026-02-13",
-  "main": "server.js", 
+  "main": "backend/server.js", 
   "compatibility_flags": [
     "nodejs_compat" 
   ]
