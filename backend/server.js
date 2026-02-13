@@ -453,60 +453,16 @@ app.put('/api/admin/kontak', authenticateAdmin, async (req, res) => {
 // ========================================
 // MIGRASI DATA JSON KE FIREBASE (TAMBAHKAN DI SINI)
 // ========================================
-const fs = require('fs');
-const path = require('path');
+// ... kode Firebase kamu tetap sama ...
 
-const migrateLocalToFirebase = async () => {
-    try {
-        console.log("⏳ Memulai migrasi data dari JSON ke Firebase...");
-        const collections = ['home', 'kegiatan', 'struktur', 'kontak'];
-        
-        for (const col of collections) {
-            const filePath = path.join(__dirname, 'database', `${col}.json`);
-            
-            if (fs.existsSync(filePath)) {
-                let data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-                
-                // --- PERBAIKAN KHUSUS UNTUK STRUKTUR JSON YANG MUNGKIN TERBUNGKUS OBJEK ---
-                // Jika data kegiatan di JSON terbungkus { "activities": [...] }
-                if (col === 'kegiatan' && data.activities && Array.isArray(data.activities)) {
-                    data = data.activities;
-                }
+// Hapus bagian migrasi JSON ke Firebase karena Cloudflare tidak dukung 'fs'
 
-                // 1. LOGIKA UNTUK DATA TUNGGAL (Home & Kontak)
-                if (!Array.isArray(data)) {
-                    await db.collection(col).doc('data').set(data);
-                    console.log(`✅ Koleksi ${col} berhasil dipindahkan ke doc('data')`);
-                } 
-                
-                // 2. LOGIKA UNTUK DATA DAFTAR (Kegiatan & Struktur Anggota)
-                else {
-                    console.log(`📤 Mengirim ${data.length} item ke koleksi ${col}...`);
-                    for (const item of data) {
-                        // Gunakan properti 'id' dari JSON sebagai ID DOKUMEN di Firestore
-                        // Ini KUNCI agar tombol Edit & Hapus bisa bekerja
-                        const docId = item.id ? String(item.id) : null;
-                        
-                        if (docId) {
-                            // Membuat dokumen: kegiatan/1, kegiatan/2, dst
-                            await db.collection(col).doc(docId).set(item);
-                        } else {
-                            // Jika tidak ada ID, biarkan Firebase buat ID otomatis
-                            await db.collection(col).add(item);
-                        }
-                    }
-                    console.log(`✅ Koleksi ${col} berhasil dipindahkan sebagai dokumen terpisah.`);
-                }
-            }
-        }
-        console.log("🏁 MIGRASI SELESAI: Data sekarang tersusun rapi di Firestore!");
-    } catch (error) {
-        console.error("❌ Gagal migrasi:", error.message);
-    }
+const serverless = require('@codegenie/serverless-express');
+
+// Export untuk Cloudflare Workers
+exports.fetch = (request, env, ctx) => {
+    return serverless({ app })(request, env, ctx);
 };
-
-// AKTIFKAN BARIS DI BAWAH INI HANYA SEKALI UNTUK PINDAHKAN DATA
-  migrateLocalToFirebase();
 
 // ========================================
 // START SERVER
